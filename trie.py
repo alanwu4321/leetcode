@@ -7,7 +7,6 @@ class Node(object):
         self.isword = False
         
 class Trie(object):
-
     def __init__(self):
         """
         Initialize your data structure here.
@@ -38,6 +37,29 @@ class Trie(object):
                 return False
         return current.isword
 
+    def delete(self, word):
+        """
+        Returns True if the word is in the trie. False if the word doesn't exist
+        :type word: str
+        :rtype: bool
+        """
+
+        # check existence of the word first
+        if not self.search(word):
+            return False
+        stack = list()
+        current = self.root
+
+        #traverse all the way down and stack up the map
+        for w in word:
+            stack.append(current.children)
+            current = current.children.get(w)
+        
+        ch = stack.pop()
+        ch[word[-1:]].isword = False            
+
+        return True
+
     def startsWith(self, prefix):
         """
         Returns if there is any word in the trie that starts with the given prefix.
@@ -64,6 +86,20 @@ def test_trie():
     assert trie.search("apple") == True
     assert trie.search("app") == False
     assert trie.startsWith("app") == True
+
     trie.insert("app")   
     assert trie.search("app") == True
+
+    assert trie.delete("ap") == False
+    assert trie.delete("app") == True
+    assert trie.search("app") == False
+
+    assert trie.delete("apple") == True
+    assert trie.search("apple") == False
+
+    trie.insert("apple")
+    assert trie.search("apple") == True
+
+
+
 
