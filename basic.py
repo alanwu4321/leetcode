@@ -1,5 +1,6 @@
 import collections
 import sys
+import heapq
 
 """
 Node
@@ -36,17 +37,37 @@ print("\n======LIST=======\n")
 
 intialize = [0] * 100
 
-any(a)
-my_comp = [x * 5 for x in range(1000) if x%2==0]
-my_gen = (x * 5 for x in range(1000)if x%2==0)
-
-sys.getsizeof(my_comp) > sys.getsizeof(my_gen)
 
 test = [[1,2],[1],[3]]
 
 [1 in row for row in test ] #=> [true, true, true]
 any((1 in row for row in test)) #=> false
 
+for i in test:
+    print(i)
+
+for i in range(len(test)):
+    print(i)
+
+
+"""
+Generator
+"""
+
+print("\n======GENERATOR=======\n")
+
+my_comp = [x * 5 for x in range(1000) if x%2==0]
+my_gen = (x * 5 for x in range(1000)if x%2==0)
+
+print(sys.getsizeof(my_comp) > sys.getsizeof(my_gen))
+
+def test():
+    tuple = ((1,2), (3,4))
+    for a, b in tuple:
+        yield a, b
+
+for i in test():
+    print(i)
 
 
 """
@@ -123,3 +144,15 @@ class Orange:
         self.col = col
         self.layer = layer
 
+        
+"""
+Heap
+"""
+print("\n======HEAP=======\n")
+nums = [4,1,2,3]
+heapq.heapify(nums)
+print(nums)
+heapq.heappush(nums,5)
+print(nums)
+heapq.heapreplace(nums,6)
+print(nums)
