@@ -16,12 +16,8 @@ class Solution(object):
         #create min heap for end time with the endtime of the first meeting
         heap = [intervals[0][1]]
         heapq.heapify(heap)
-        total = 1
         occupied = 1
-        
-        #free room list
-        freeRoom = list()
-        
+
         # if the no free room then add the room
         # check freeroom
         for i, newMeeting in enumerate(intervals[1:]):
@@ -30,7 +26,6 @@ class Solution(object):
             # if start time of the new meeting is < endTime
             if newStartTime < oldEndTime:
                 #create new meeting room and increment occupied
-                total += 1
                 occupied +=1
             else:
                 #pop the available
@@ -38,4 +33,4 @@ class Solution(object):
             #push new meeting endTime
             heapq.heappush(heap,newMeeting[1])
         
-        return total
+        return occupied
