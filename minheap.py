@@ -33,8 +33,7 @@ class KthLargest(object):
         elif val > self.heap[0]:
             heapq.heapreplace(self.heap, val)
             
-        return self.heap[0]
-        
+        return self.heap[0]        
 
 
 # Your KthLargest object will be instantiated and called as such:

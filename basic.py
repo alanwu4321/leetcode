@@ -82,8 +82,17 @@ for i in range(10,0, -1):
 Dictionary
 """
 
+dc = dict()
+dc.get(1) # to prevent key error
+
 dfc = collections.defaultdict(Node)
 # print(dfc["asdf"].val)
+"""
+Boolean
+"""
+
+    bool(1) #⇒ True
+    bool(0) #⇒ False
 
 """
 String
