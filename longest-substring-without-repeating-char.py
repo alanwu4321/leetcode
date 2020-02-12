@@ -21,6 +21,31 @@ class Solution(object):
                 start = max(hmap[val] + 1, start)
             hmap[val] = end
             res = max(end-start + 1, res)
+
+
+        class Solution(object):
+        def lengthOfLongestSubstring(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        lastSeen = dict()
+        start = 0
+        maxSub = 1 if len(s) > 0 else 0
+        
+        for i, ch in enumerate(s):
+            # print(start)
+            if not ch in lastSeen:
+                lastSeen[ch] = i
+                maxSub = max(maxSub, i - start + 1)
+            else:
+                if lastSeen[ch] >= start:
+                    start = lastSeen[ch] +1
+                lastSeen[ch] = i
+                maxSub = max(maxSub, i - start + 1)
+            print(start)
+        return maxSub
+                
             
         
 #         abba
