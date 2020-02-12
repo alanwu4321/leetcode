@@ -90,10 +90,8 @@ dfc = collections.defaultdict(Node)
 """
 Boolean
 """
-
-    bool(1) #⇒ True
-    bool(0) #⇒ False
-
+# bool(1) = True
+# bool(0) = False
 """
 String
 """
@@ -165,3 +163,30 @@ heapq.heappush(nums,5)
 print(nums)
 heapq.heapreplace(nums,6)
 print(nums)
+
+"""
+Args
+"""
+
+def arg(*arg): 
+    for i in arg:
+        print("arg:", i) 
+
+def kwag(arg1, arg2, arg3): 
+    print("arg1:", arg1) 
+    print("arg2:", arg2) 
+    print("arg3:", arg3) 
+
+def kwag1(**argk):
+    for k, v in argk.items():
+        print(k, v)
+      
+# Now we can use *args or **kwargs to 
+# pass arguments to this function :  
+args = ("Geeks", "for", "Geeks") 
+arg(*args) 
+  
+kwargs = {"arg1" : "Geeks", "arg2" : "for", "arg3" : "Geeks"} 
+kwag(**kwargs)
+kwag1(**kwargs)
+
