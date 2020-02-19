@@ -26,8 +26,8 @@ String
 Int
 """
 
-sys.maxint
--sys.maxint -1
+# sys.maxint
+# -sys.maxint -1
 
 """
 List
@@ -167,8 +167,16 @@ print(nums)
 """
 Args
 """
+#      arg
+#    /  |  \
+#  (a   b   c)
 
+#  *arg = a, b, c => arg = (a, b, c)
 def arg(*arg): 
+    print(type(arg))
+    print(type(arg))
+    print(arg)
+    print(*arg)
     for i in arg:
         print("arg:", i) 
 
@@ -184,9 +192,45 @@ def kwag1(**argk):
 # Now we can use *args or **kwargs to 
 # pass arguments to this function :  
 args = ("Geeks", "for", "Geeks") 
-arg(*args) 
+arg("Geeks", "for", 1) 
   
 kwargs = {"arg1" : "Geeks", "arg2" : "for", "arg3" : "Geeks"} 
 kwag(**kwargs)
 kwag1(**kwargs)
 
+def fibonacci(n):
+    a, b = 1, 1
+    for _ in range(n):
+        yield a
+        a, b = b, a + b
+
+
+print(list(fibonacci(5)))
+print(next(fibonacci(5)))
+
+def PowTwoGen(max = 0):
+    n = 0
+    while n < max:
+        yield 2 ** n
+        n += 1
+
+for i in PowTwoGen(6):
+    print(i)
+
+
+print([*"RealPython"])
+
+def multiply(n1,n2):
+    if n2 == 0:
+        return 0
+    if n2 > 0:
+        return n1 + multiply(n1, n2-1)
+    if n2 < 0:
+        return -1 * n1 + multiply(n1, n2+1)
+
+print(multiply(0,-3))
+
+# 1 +
+# 1 +
+# 1 +
+# 0
