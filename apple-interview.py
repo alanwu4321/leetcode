@@ -29,6 +29,8 @@ def explore(hmap,cur,res):
         else:
             explore(val,cur + '-' + key,res)
 
+#Time: O(nodes of the tree)
+#Space: O(height of the tree)  Worst case: O(nodes of the tree) in case the tree is skewed
 def pathToInt(inp):
     res = list()
     explore(inp,'',res)
