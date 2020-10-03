@@ -254,6 +254,7 @@ def get_output_value_with_caching(step_declarations: List[StepDeclaration], valu
     for dep in steps_dependencies:
         # temp = map(lambda x: action_outputs[x], steps_dict[dep].input_names)
         outputs = list()
+        # depency
         for inp in steps_dict[dep].input_names:
             outputs.append(action_outputs[inp])
         action = steps_dict[dep].action
@@ -336,7 +337,8 @@ def get_output_value_with_parallelism(step_declarations: List[StepDeclaration], 
 
     pool = Pool(multiprocessing.cpu_count() - 1)
 
-    def func (dep):
+    def func(dep):
+        # FOR THOSE WHO HAVE INPUT DEPENDECNY
         for inp in steps_dict[dep].input_names:
             while (inp not in action_outputs):
                 pass
@@ -440,4 +442,57 @@ fn main() {
 }
 
 """
+
+ '''
+ list1= [[3, [4], 5], 6,, ....]
+ list2= [[3, [4], 6], 6, ....]
+ 
+ 
+ 1 2 3 4 5 6 ...
+ 1 2 3 4 6 6 ...
+ 5 <> 6
+ (5,6)
+ '''
+
+
+ # return: tuple of mismatched elements
+ def nested_lists(list1, list2):
+     def find_first_and_pop(li):
+         # first element is int
+         if not isinstance(li[0], list):
+             el = li.pop(0)
+             return (el, li)
+         else:
+             num, new_list = find_first_and_pop(li[0])
+             if not len(new_list):
+                 li.pop(0)
+                 return num, li
+             li.pop(0)
+             # still need to visit the new list
+             return num, [new_list, li]
+
+     while True:
+         el1, _list1 = find_first_and_pop(list1)
+         el2, _list2 = find_first_and_pop(list2)
+
+         if not el1 == el2:
+             return (el1, el2)
+         list1 = _list1
+         list2 = _list2
+
+
+ list1 = [1, 2, [3, [4], 5], 6, 7]
+ list2 = [1, [[2]], [3, [4], 6], 6]
+ print(nested_lists(list1, list2))
+
+ '''
+ a potential test
+ 
+ list1 = [1, 2, [3, [4], 5], 6, 7]
+ list2 = [1, [[2]], [3, [4], 6], 6]
+ print(nested_lists(list1, list2))
+ --> should return (5,6)
+ 
+ '''
+
 

@@ -1,4 +1,4 @@
- """LOG PROCESSOR V4.6
+"""LOG PROCESSOR V4.6
 
 Instructions:
 
@@ -31,29 +31,39 @@ stores a list of strings that match the output_name from other steps, so that th
 Read further to see examples of the system in action, and begin with Questions 1-4.
 
 """
+from multiprocessing.pool import ThreadPool as Pool
+import multiprocessing
+from datetime import datetime
 from typing import List, Callable, Any
 
 # typedef for logdata, just for clarity, since we use strings elsewhere
 logdata = str
 
 # action functions
+
+
 def action_get_logs1(inputs: List[logdata]) -> logdata:
     return "this_is_a_log"
+
 
 def action_get_logs2(inputs: List[logdata]) -> logdata:
     return "yet_another_log"
 
+
 def action_combine_logs(inputs: List[logdata]) -> logdata:
     return " ".join(inputs)
 
+
 def action_combine_logs_flipped(inputs: List[logdata]) -> logdata:
     return " ".join(reversed(inputs))
+
 
 class StepDeclaration:
     def __init__(self, output_name: str, input_names: List[str], action: Callable):
         self.output_name = output_name
         self.input_names = input_names
         self.action = action
+
 
 # an example of a system of step declarations for processing logs
 example_system_1 = [
@@ -69,7 +79,8 @@ example_system_1 = [
     ),
     StepDeclaration(
         output_name="output3",
-        input_names=["output1", "output2"],  # each "input_names" item corresponds to an "output_name" from another StepDeclaration.
+        # each "input_names" item corresponds to an "output_name" from another StepDeclaration.
+        input_names=["output1", "output2"],
         action=action_combine_logs,  # when this action function is called, the parameters to "action_combine_logs()" will be the return values from the action functions "action_get_logs1()" and "action_get_logs1()"
     ),
     StepDeclaration(
@@ -101,6 +112,7 @@ That said, correct slow solutions will get more marks than incorrect fast ones.
 You may also leave notes explaining where you further optimize if you had the time.
 """
 
+
 def getStepsDict(step_declarations: List[StepDeclaration]):
     step_dict = dict()
     for step in step_declarations:
@@ -115,7 +127,6 @@ def action_evaluation_order(step_declarations: List[StepDeclaration], order_for_
     visited = set()
     dependencies = list()
 
-
     def dfs(output: str):
         visited.add(output)
         for input_name in steps_dict[output].input_names:
@@ -127,29 +138,33 @@ def action_evaluation_order(step_declarations: List[StepDeclaration], order_for_
 
     return dependencies
 
-
     """Candidate to implement."""
 
+
 print("Running Q1...")
-order = action_evaluation_order(step_declarations=example_system_1, order_for_output_name="output1")
+order = action_evaluation_order(
+    step_declarations=example_system_1, order_for_output_name="output1")
 assert order == ["output1"], "Question 1a Error"
 
-order = action_evaluation_order(step_declarations=example_system_1, order_for_output_name="output2")
+order = action_evaluation_order(
+    step_declarations=example_system_1, order_for_output_name="output2")
 assert order == ["output2"], "Question 1b Error"
 
-order = action_evaluation_order(step_declarations=example_system_1, order_for_output_name="output3")
+order = action_evaluation_order(
+    step_declarations=example_system_1, order_for_output_name="output3")
 # order should be a list of strings which are in the following order
 assert order in (
     ["output1", "output2", "output3"],
     ["output2", "output1", "output3"],
-), "Question 1c Error" # there are multiple valid orders for "output3"
+), "Question 1c Error"  # there are multiple valid orders for "output3"
 
 
-order = action_evaluation_order(step_declarations=example_system_1, order_for_output_name="output4")
+order = action_evaluation_order(
+    step_declarations=example_system_1, order_for_output_name="output4")
 assert order in (
     ["output1", "output2", "output3", "output4"],
     ["output2", "output1", "output3", "output4"],
-), "Question 1d Error" # there are multiple valid orders for "output4"
+), "Question 1d Error"  # there are multiple valid orders for "output4"
 print("Q1 OK")
 
 """
@@ -169,17 +184,22 @@ for example_system_1, the get_output_value(example_system_1, "output3") function
 4) return the result of 3), as the "value_for_output_name" parameter matches the StepDeclaration.output_name for that step.
 # note that as in Q1, step 1) and 2) could happen in the reverser order.
 """
+
+
 def get_output_value(step_declarations: List[StepDeclaration], value_for_output_name: str) -> logdata:
     steps_dict = getStepsDict(step_declarations)
-    steps_dependencies = action_evaluation_order(step_declarations, value_for_output_name)
+    steps_dependencies = action_evaluation_order(
+        step_declarations, value_for_output_name)
 
     action_outputs = dict()
 
     for dep in steps_dependencies:
         # temp = map(lambda x: action_outputs[x], steps_dict[dep].input_names)
         outputs = list()
+        # single step doesn't have any input dependency
         for inp in steps_dict[dep].input_names:
             outputs.append(action_outputs[inp])
+        # store results in the map so we can later retrieve 
         action_outputs[dep] = steps_dict[dep].action(outputs)
         print(action_outputs)
         print(outputs)
@@ -192,14 +212,18 @@ def get_output_value(step_declarations: List[StepDeclaration], value_for_output_
     Return the output value of the action corresponding to the "output_name".
     """
 
+
 print("Running Q2...")
-out1 = get_output_value(step_declarations=example_system_1, value_for_output_name="output1")
+out1 = get_output_value(step_declarations=example_system_1,
+                        value_for_output_name="output1")
 assert out1 == "this_is_a_log", "Question 2a Error"
 
-out3 = get_output_value(step_declarations=example_system_1, value_for_output_name="output3")
+out3 = get_output_value(step_declarations=example_system_1,
+                        value_for_output_name="output3")
 assert out3 == "this_is_a_log yet_another_log", "Question 2b Error"
 
-out4 = get_output_value(step_declarations=example_system_1, value_for_output_name="output4")
+out4 = get_output_value(step_declarations=example_system_1,
+                        value_for_output_name="output4")
 assert out4 == "yet_another_log this_is_a_log yet_another_log", "Question 2c Error"
 print("Q2 OK")
 
@@ -218,12 +242,15 @@ a real system, some inputs are accessing external data (eg, reading logs off a f
 """
 
 # new actions and system for Q3
-from datetime import datetime
+
+
 def action_read_logs(inputs: List[logdata]) -> logdata:
     return f"log from a file system at {datetime.now().minute}"
 
+
 def action_combine_logs(inputs: List[logdata]) -> logdata:
     return " ".join(inputs)
+
 
 example_system_2 = [
     StepDeclaration(
@@ -245,9 +272,11 @@ example_system_2 = [
 
 cache = {}  # use this variable as your cache
 
+
 def get_output_value_with_caching(step_declarations: List[StepDeclaration], value_for_output_name: str) -> logdata:
     steps_dict = getStepsDict(step_declarations)
-    steps_dependencies = action_evaluation_order(step_declarations, value_for_output_name)
+    steps_dependencies = action_evaluation_order(
+        step_declarations, value_for_output_name)
 
     action_outputs = dict()
 
@@ -267,15 +296,17 @@ def get_output_value_with_caching(step_declarations: List[StepDeclaration], valu
         # store input
         action_outputs[dep] = cache[action][1]
 
-
     return action_outputs[value_for_output_name]
 
     """Candidate to implement."""
 
+
 print("Running Q3...")
-get_output_value_with_caching(step_declarations=example_system_2, value_for_output_name="system_2_output")
+get_output_value_with_caching(
+    step_declarations=example_system_2, value_for_output_name="system_2_output")
 # values added to the cache during this call
-get_output_value_with_caching(step_declarations=example_system_2, value_for_output_name="system_2_output")
+get_output_value_with_caching(
+    step_declarations=example_system_2, value_for_output_name="system_2_output")
 # In the second call, if the output for "read_output" is the same as the first call, then
 # that means that the inputs for "system_2_output" haven't changed, which means we don't
 # need to recalculate the output value for "system_2_output".
@@ -315,7 +346,8 @@ example_system_1 = [
     ),
     StepDeclaration(
         output_name="output3",
-        input_names=["output1", "output2"],  # each "input_names" item corresponds to an "output_name" from another StepDeclaration.
+        # each "input_names" item corresponds to an "output_name" from another StepDeclaration.
+        input_names=["output1", "output2"],
         action=action_combine_logs,  # when this action function is called, the parameters to "action_combine_logs()" will be the return values from the action functions "action_get_logs1()" and "action_get_logs1()"
     ),
     StepDeclaration(
@@ -325,18 +357,17 @@ example_system_1 = [
     ),
 ]
 
-import multiprocessing
-from multiprocessing.pool import ThreadPool as Pool
 
 def get_output_value_with_parallelism(step_declarations: List[StepDeclaration], value_for_output_name: str) -> logdata:
     steps_dict = getStepsDict(step_declarations)
-    steps_dependencies = action_evaluation_order(step_declarations, value_for_output_name)
+    steps_dependencies = action_evaluation_order(
+        step_declarations, value_for_output_name)
 
     action_outputs = dict()
 
     pool = Pool(multiprocessing.cpu_count() - 1)
 
-    def func (dep):
+    def func(dep):
         for inp in steps_dict[dep].input_names:
             while (inp not in action_outputs):
                 pass
@@ -352,13 +383,14 @@ def get_output_value_with_parallelism(step_declarations: List[StepDeclaration], 
 
         action_outputs[dep] = cache[action][1]
 
-
     pool.map(func, steps_dependencies)
 
     return action_outputs[value_for_output_name]
 
+
 print("Running Q4...")
-print(get_output_value_with_parallelism(step_declarations=example_system_2, value_for_output_name="system_2_output"))
+print(get_output_value_with_parallelism(
+    step_declarations=example_system_2, value_for_output_name="system_2_output"))
 
 """
 *** OTHER LANGAUGE EXAMPLES ***
@@ -440,4 +472,3 @@ fn main() {
 }
 
 """
-
