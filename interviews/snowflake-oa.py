@@ -16,13 +16,14 @@ def largestArea(samples):
     # Write your code here
     n = len(samples)
     diag = [[0 for x in range(n)] for y in range(n)]
-    up = diag
-    left = diag
+    up = [[0 for x in range(n)] for y in range(n)]
+    left = [[0 for x in range(n)] for y in range(n)]
 
     ret = 0
 
-    for i in range(n):
+    for i in range(n) :
         for j in range(n):
+            # bottom right corner of the square
             if (samples[i][j]):
                 diag[i][j] = 1
                 up[i][j] = 1
@@ -54,7 +55,7 @@ def largestArea(samples):
 
 if __name__ == '__main__':
 
-    test = [[1, 1, 1], [1, 1, 0], [0, 1, 1]]
+    test = [[1, 1, 1], [1, 1, 0], [1, 1, 1]]
 
     ans = largestArea(test)
     print(ans)
